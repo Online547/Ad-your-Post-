@@ -154,6 +154,22 @@
   }
   .pay-box b{ display:block; margin-bottom:8px; color:#8A5A00; font-size:.88rem; }
 
+  .price-plans-title{ font-size:.78rem; font-weight:700; color:var(--primary-dark); margin:0 0 8px; display:flex; align-items:center; gap:6px; }
+  .price-plans{ display:flex; flex-direction:column; gap:6px; margin-bottom:14px; }
+  .pp-row{
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:#F8F8FF; border:1.5px solid #E4E3F3; border-radius:11px;
+    padding:9px 12px; transition:border-color .15s, background .15s;
+  }
+  .pp-row .pp-duration{ font-size:.82rem; font-weight:600; color:var(--text); display:flex; align-items:center; gap:6px; }
+  .pp-row .pp-tag{
+    font-size:.6rem; font-weight:800; letter-spacing:.02em; text-transform:uppercase;
+    background:linear-gradient(90deg, var(--accent), #0EA37F); color:#fff;
+    padding:2px 7px; border-radius:999px;
+  }
+  .pp-row .pp-amount{ font-size:.9rem; font-weight:800; color:var(--primary-dark); white-space:nowrap; }
+  .pp-row.best{ border-color:var(--accent); background:#EFFCF9; }
+
   .post-type-cards{ display:flex; gap:10px; margin-top:6px; }
   .pt-card{
     flex:1; border:1.5px solid #E4E3F3; border-radius:14px; padding:14px 10px;
@@ -274,9 +290,24 @@
       <select name="Condition"><option>New</option><option>Used</option></select>
 
       <label class="field-label">Shehar</label>
-      <select name="City">
-        <option>Hyderabad</option><option>Karachi</option><option>Tando Adam</option><option>Nawabshah</option>
-      </select>
+      <input type="text" name="City" placeholder="type karein ya list se chunein" list="cityList" autocomplete="off" required>
+      <datalist id="cityList">
+        <option value="Karachi"></option>
+        <option value="Hyderabad"></option>
+        <option value="Tando Adam"></option>
+        <option value="Nawabad"></option>
+        <option value="Nawabshah"></option>
+        <option value="Mirpurkhas"></option>
+        <option value="Kandiyari"></option>
+        <option value="Kandiaro"></option>
+        <option value="Sanghar"></option>
+        <option value="Jam Nawaz Ali"></option>
+        <option value="Berani"></option>
+        <option value="Dalor Mori"></option>
+        <option value="Tilashah"></option>
+        <option value="Badin"></option>
+        <option value="Matli"></option>
+      </datalist>
 
       <div class="btn-row">
         <button type="button" class="btn-ghost" onclick="back(2)">? Peeche</button>
@@ -320,7 +351,17 @@
       </div>
 
       <div id="payBox" class="pay-box">
-        <b>?? JazzCash: Imtiaz Ali — 03069348405</b>
+        <p class="price-plans-title">Apna Package Chunein &mdash; jitne din top pe rehna chahte hain</p>
+        <div class="price-plans">
+          <div class="pp-row"><span class="pp-duration">2 Din Top</span><span class="pp-amount">Rs 50</span></div>
+          <div class="pp-row"><span class="pp-duration">5 Din Top</span><span class="pp-amount">Rs 100</span></div>
+          <div class="pp-row"><span class="pp-duration">7 Din Top</span><span class="pp-amount">Rs 150</span></div>
+          <div class="pp-row"><span class="pp-duration">10 Din Top</span><span class="pp-amount">Rs 200</span></div>
+          <div class="pp-row"><span class="pp-duration">15 Din Top</span><span class="pp-amount">Rs 300</span></div>
+          <div class="pp-row best"><span class="pp-duration">30 Din Top <span class="pp-tag">Best Value</span></span><span class="pp-amount">Rs 600</span></div>
+          <div class="pp-row"><span class="pp-duration">2 Mahine Top</span><span class="pp-amount">Rs 1000</span></div>
+        </div>
+        <b>?? JazzCash: Imtiaz Ali ï¿½ 03069348405</b>
         <label class="field-label" style="margin-top:0;">Apka Naam</label>
         <input type="text" name="Name" placeholder="naam" data-pay-required>
         <label class="field-label">Mobile Number</label>
@@ -409,7 +450,7 @@
   });
 
   function next(s){
-    if(!validateStep(s)) return; // stop here — required fields left empty turn red
+    if(!validateStep(s)) return; // stop here ï¿½ required fields left empty turn red
     document.getElementById('s'+s).classList.remove('active');
     document.getElementById('s'+(s+1)).classList.add('active');
     updateStepper(s+1);
@@ -454,7 +495,7 @@
   document.getElementById('mobileForm').addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    if(!validateStep(4)) return; // stop submit — empty required fields turn red
+    if(!validateStep(4)) return; // stop submit ï¿½ empty required fields turn red
 
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
