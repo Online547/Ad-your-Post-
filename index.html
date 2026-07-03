@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ur-Latn" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>Mobile Bazar - Post Ad</title>
+<style>
+  :root{
+    --primary:#5B4FE5;
+    --primary-dark:#4338CA;
+    --accent:#17C3B2;
+    --bg-top:#EEF0FF;
+    --bg-bottom:#F6F8FC;
+    --text:#1E1B33;
+    --muted:#7B7A94;
+    --danger:#E4572E;
+    --card-radius:22px;
+    --field-radius:12px;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:'Segoe UI', Tahoma, sans-serif;
+    background:linear-gradient(160deg, var(--bg-top) 0%, var(--bg-bottom) 55%);
+    min-height:100vh;
+    padding:24px 14px;
+    color:var(--text);
+  }
+
+  .form-card{
+    max-width:460px;
+    margin:auto;
+    background:#fff;
+    padding:28px 22px 24px;
+    border-radius:var(--card-radius);
+    box-shadow:0 18px 40px rgba(60,50,150,0.14);
+    position:relative;
+    overflow:hidden;
+  }
+  .form-card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:6px;
+    background:linear-gradient(90deg, var(--primary), var(--accent));
+  }
+
+  .brand{
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    margin-bottom:6px;
+  }
+  .brand svg{ width:30px; height:30px; flex-shrink:0; }
+  .brand h1{
+    font-size:1.35rem; margin:0; font-weight:800; letter-spacing:.2px;
+    background:linear-gradient(90deg, var(--primary-dark), var(--accent));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .subtitle{
+    text-align:center; color:var(--muted); font-size:.85rem; margin:0 0 20px;
+  }
+
+  /* Step progress */
+  .stepper{
+    display:flex; justify-content:space-between; margin-bottom:22px; position:relative;
+  }
+  .stepper::before{
+    content:""; position:absolute; top:14px; left:8%; right:8%; height:3px;
+    background:#E7E6F5; z-index:0; border-radius:3px;
+  }
+  .stepper .fill{
+    content:""; position:absolute; top:14px; left:8%; height:3px;
+    background:var(--primary); z-index:1; border-radius:3px;
+    width:0%; transition:width .35s ease;
+  }
+  .dot{
+    position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; gap:6px; flex:1;
+  }
+  .dot .circle{
+    width:28px; height:28px; border-radius:50%; background:#E7E6F5; color:#9997B8;
+    display:flex; align-items:center; justify-content:center; font-size:.78rem; font-weight:700;
+    transition:all .3s ease;
+  }
+  .dot.active .circle, .dot.done .circle{
+    background:var(--primary); color:#fff; box-shadow:0 4px 10px rgba(91,79,229,.35);
+  }
+  .dot span.label{ font-size:.66rem; color:var(--muted); white-space:nowrap; }
+  .dot.active span.label{ color:var(--primary-dark); font-weight:600; }
+
+  .step{ display:none; animation:fadeIn .3s ease; }
+  .step.active{ display:block; }
+  @keyframes fadeIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  label.field-label{ display:block; font-size:.8rem; color:var(--muted); margin:12px 2px 4px; font-weight:600; }
+  .hint{ font-size:.7rem; color:#A9A8C4; margin:-2px 2px 0; }
+
+  input, select, textarea{
+    width:100%; padding:13px 14px; margin:2px 0 4px;
+    border:1.5px solid #E4E3F3; border-radius:var(--field-radius);
+    font-size:.95rem; background:#FBFBFF; color:var(--text);
+    transition:border-color .2s, box-shadow .2s;
+    font-family:inherit;
+  }
+  input:focus, select:focus, textarea:focus{
+    outline:none; border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(91,79,229,0.15);
+    background:#fff;
+  }
+  textarea{ min-height:90px; resize:vertical; }
+
+  input.invalid, select.invalid, textarea.invalid{
+    border-color:var(--danger) !important;
+    background:#FFF3EF;
+    box-shadow:0 0 0 3px rgba(228,87,46,0.15);
+    animation:shake .3s ease;
+  }
+  @keyframes shake{
+    0%,100%{ transform:translateX(0); }
+    25%{ transform:translateX(-4px); }
+    75%{ transform:translateX(4px); }
+  }
+  .error-msg{
+    color:var(--danger); font-size:.72rem; margin:-2px 2px 6px; display:none; font-weight:600;
+  }
+  .error-msg.show{ display:block; }
+
+  .file-row{ margin-bottom:10px; }
+  .file-row label{ font-size:.82rem; color:var(--muted); font-weight:600; }
+  input[type="file"]{ padding:9px; font-size:.85rem; background:#FBFBFF; }
+
+  .btn-row{ display:flex; gap:10px; margin-top:16px; }
+  button{
+    padding:13px; border:none; border-radius:var(--field-radius);
+    cursor:pointer; font-weight:700; font-size:.95rem;
+    transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  button:active{ transform:scale(.97); }
+  .btn-primary{
+    flex:1; color:#fff;
+    background:linear-gradient(90deg, var(--primary), var(--primary-dark));
+    box-shadow:0 8px 18px rgba(91,79,229,.3);
+  }
+  .btn-primary:disabled{ opacity:.6; cursor:not-allowed; }
+  .btn-ghost{
+    flex:1; background:#F1F0FB; color:var(--primary-dark);
+  }
+
+  select{ -webkit-appearance:none; appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='14' height='9' viewBox='0 0 14 9'><path d='M1 1L7 7L13 1' stroke='%237B7A94' stroke-width='2' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat:no-repeat; background-position:right 14px center;
+    padding-right:34px;
+  }
+
+  .pay-box{
+    background:#FFF6E9; border:1.5px solid #FBD9A5; padding:16px;
+    border-radius:14px; display:none; font-size:.85rem; margin-top:10px;
+  }
+  .pay-box b{ display:block; margin-bottom:8px; color:#8A5A00; font-size:.88rem; }
+
+  .post-type-cards{ display:flex; gap:10px; margin-top:6px; }
+  .pt-card{
+    flex:1; border:1.5px solid #E4E3F3; border-radius:14px; padding:14px 10px;
+    text-align:center; cursor:pointer; font-size:.85rem; font-weight:600; color:var(--muted);
+    transition:all .2s;
+  }
+  .pt-card.selected{
+    border-color:var(--primary); background:#F3F2FF; color:var(--primary-dark);
+    box-shadow:0 4px 12px rgba(91,79,229,.15);
+  }
+  .pt-card .big{ font-size:1.3rem; display:block; margin-bottom:4px; }
+
+  /* Modal */
+  .overlay{
+    position:fixed; inset:0; background:rgba(20,16,50,.55);
+    display:none; align-items:center; justify-content:center; z-index:999; padding:20px;
+    backdrop-filter:blur(2px);
+  }
+  .overlay.active{ display:flex; }
+  .modal{
+    background:#fff; border-radius:20px; padding:28px 24px 22px; max-width:360px; width:100%;
+    text-align:center; box-shadow:0 20px 50px rgba(0,0,0,.25);
+    animation:pop .28s ease;
+  }
+  @keyframes pop{ from{opacity:0; transform:scale(.9);} to{opacity:1; transform:scale(1);} }
+  .modal .check{
+    width:56px; height:56px; border-radius:50%; margin:0 auto 14px;
+    background:linear-gradient(135deg, var(--accent), #0EA37F);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .modal .check svg{ width:28px; height:28px; }
+  .modal h3{ margin:0 0 8px; font-size:1.1rem; color:var(--text); }
+  .modal p{ margin:0 0 18px; font-size:.9rem; color:var(--muted); line-height:1.6; }
+  .modal button{ width:100%; color:#fff; background:linear-gradient(90deg, var(--primary), var(--primary-dark)); box-shadow:0 8px 18px rgba(91,79,229,.3); }
+  .modal .countdown{ font-size:.75rem; color:var(--muted); margin-top:12px; }
+
+  @media (max-width:380px){
+    .form-card{ padding:22px 16px 18px; }
+    .dot span.label{ font-size:.6rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="form-card">
+  <div class="brand">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="6" y="2" width="12" height="20" rx="3" stroke="#5B4FE5" stroke-width="1.8"/>
+      <circle cx="12" cy="18.3" r="1.1" fill="#17C3B2"/>
+      <rect x="8.3" y="4.5" width="7.4" height="10.5" rx="1" fill="#EEF0FF"/>
+    </svg>
+    <h1>Mobile Bazar</h1>
+  </div>
+  <p class="subtitle">Apna mobile chand minutes mein bechein ??</p>
+
+  <div class="stepper">
+    <div class="fill" id="fillBar"></div>
+    <div class="dot active" data-step="1"><div class="circle">1</div><span class="label">Mobile</span></div>
+    <div class="dot" data-step="2"><div class="circle">2</div><span class="label">Tafseel</span></div>
+    <div class="dot" data-step="3"><div class="circle">3</div><span class="label">Seller</span></div>
+    <div class="dot" data-step="4"><div class="circle">4</div><span class="label">Post</span></div>
+  </div>
+
+  <form id="mobileForm">
+    <div class="step active" id="s1">
+      <label class="field-label">Mobile ka Naam</label>
+      <input type="text" name="MobileName" placeholder="misal: iPhone 13 Pro" required>
+
+      <label class="field-label">Brand</label>
+      <input type="text" name="Brand" placeholder="type karein ya list se chunein" list="brandList" autocomplete="off" required>
+      <datalist id="brandList">
+        <option value="Apple"></option>
+        <option value="Samsung"></option>
+        <option value="Infinix"></option>
+        <option value="Vivo"></option>
+        <option value="Oppo"></option>
+        <option value="Xiaomi (Redmi)"></option>
+        <option value="Realme"></option>
+        <option value="Tecno"></option>
+        <option value="Huawei"></option>
+        <option value="Nokia"></option>
+        <option value="OnePlus"></option>
+        <option value="Google Pixel"></option>
+        <option value="itel"></option>
+        <option value="QMobile"></option>
+      </datalist>
+
+      <label class="field-label">Model</label>
+      <input type="text" name="Model" placeholder="misal: A54, Note 12, iPhone 13" required>
+
+      <label class="field-label">Qeemat (Rs)</label>
+      <input type="number" name="Price" placeholder="qeemat darj karein" required>
+
+      <div class="btn-row"><button type="button" class="btn-primary" onclick="next(1)">Agla Marhala ?</button></div>
+    </div>
+
+    <div class="step" id="s2">
+      <label class="field-label">RAM</label>
+      <input type="text" name="RAM" placeholder="misal: 8GB" list="ramList" autocomplete="off" required>
+      <datalist id="ramList">
+        <option value="2GB"></option><option value="3GB"></option><option value="4GB"></option>
+        <option value="6GB"></option><option value="8GB"></option><option value="12GB"></option>
+        <option value="16GB"></option>
+      </datalist>
+
+      <label class="field-label">ROM / Storage</label>
+      <input type="text" name="ROM" placeholder="misal: 128GB" list="romList" autocomplete="off" required>
+      <datalist id="romList">
+        <option value="16GB"></option><option value="32GB"></option><option value="64GB"></option>
+        <option value="128GB"></option><option value="256GB"></option><option value="512GB"></option>
+        <option value="1TB"></option>
+      </datalist>
+
+      <label class="field-label">PTA Status</label>
+      <select name="PTAApproved"><option>PTA Approved</option><option>Non-PTA</option></select>
+
+      <label class="field-label">Condition</label>
+      <select name="Condition"><option>New</option><option>Used</option></select>
+
+      <label class="field-label">Shehar</label>
+      <select name="City">
+        <option>Hyderabad</option><option>Karachi</option><option>Tando Adam</option><option>Nawabshah</option>
+      </select>
+
+      <div class="btn-row">
+        <button type="button" class="btn-ghost" onclick="back(2)">? Peeche</button>
+        <button type="button" class="btn-primary" onclick="next(2)">Agla Marhala ?</button>
+      </div>
+    </div>
+
+    <div class="step" id="s3">
+      <label class="field-label">Seller ka Naam</label>
+      <input type="text" name="SellerName" placeholder="apka naam" required>
+
+      <label class="field-label">WhatsApp Number</label>
+      <input type="number" name="WhatsAppNumber" placeholder="03xxxxxxxxx" required>
+
+      <label class="field-label">Tafseel</label>
+      <textarea name="Description" placeholder="mobile ke baare mein mazeed batayein..." required></textarea>
+
+      <div class="file-row"><label>Tasveer 1</label><input type="file" id="img1" accept="image/*"></div>
+      <div class="file-row"><label>Tasveer 2</label><input type="file" id="img2" accept="image/*"></div>
+      <div class="file-row"><label>Tasveer 3</label><input type="file" id="img3" accept="image/*"></div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-ghost" onclick="back(3)">? Peeche</button>
+        <button type="button" class="btn-primary" onclick="next(3)">Agla Marhala ?</button>
+      </div>
+    </div>
+
+    <div class="step" id="s4">
+      <label class="field-label">Post ki Qisam</label>
+      <select name="PostType" id="pt" onchange="checkPay(this.value)" style="display:none;">
+        <option value="Free">Free Post</option>
+        <option value="Paid">Paid Post</option>
+      </select>
+      <div class="post-type-cards">
+        <div class="pt-card selected" data-val="Free" onclick="selectPT('Free')">
+          <span class="big">??</span>Free Post
+        </div>
+        <div class="pt-card" data-val="Paid" onclick="selectPT('Paid')">
+          <span class="big">?</span>Paid Post
+        </div>
+      </div>
+
+      <div id="payBox" class="pay-box">
+        <b>?? JazzCash: Imtiaz Ali — 03069348405</b>
+        <label class="field-label" style="margin-top:0;">Apka Naam</label>
+        <input type="text" name="Name" placeholder="naam" data-pay-required>
+        <label class="field-label">Mobile Number</label>
+        <input type="number" name="MobileNumber" placeholder="jis number se payment ki" data-pay-required>
+        <label class="field-label">Raqam</label>
+        <input type="number" name="Amount" placeholder="amount" data-pay-required>
+        <label class="field-label">Transaction ID</label>
+        <input type="text" name="TransactionID" placeholder="transaction ID" data-pay-required>
+      </div>
+
+      <div class="btn-row">
+        <button type="button" class="btn-ghost" onclick="back(4)">? Peeche</button>
+        <button type="submit" id="submitBtn" class="btn-primary">Ashtihar Jama Karwayein ?</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Success Modal -->
+<div class="overlay" id="successOverlay">
+  <div class="modal">
+    <div class="check">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <h3>Shukriya!</h3>
+    <p>Apka form jama ho gaya hai, jise hamari team approve karengi to apka ad list ho jayega. JazakAllah</p>
+    <button type="button" onclick="goToSite()">OK</button>
+    <div class="countdown" id="countdownText">10 second mein khud kar muntaqili ho rahi hai...</div>
+  </div>
+</div>
+
+<script>
+  const totalSteps = 4;
+  const redirectUrl = "https://online221.github.io/MobileBazaar/";
+
+  function updateStepper(current){
+    document.querySelectorAll('.dot').forEach(d=>{
+      const step = parseInt(d.dataset.step);
+      d.classList.remove('active','done');
+      if(step < current) d.classList.add('done');
+      if(step === current) d.classList.add('active');
+    });
+    const pct = ((current-1)/(totalSteps-1))*84; // matches left/right 8% inset
+    document.getElementById('fillBar').style.width = pct + '%';
+  }
+
+  function validateStep(s){
+    const stepEl = document.getElementById('s'+s);
+    let fields = Array.from(stepEl.querySelectorAll('input[required], select[required], textarea[required]'));
+
+    // Payment fields are only mandatory when "Paid Post" is chosen and visible
+    const payBox = document.getElementById('payBox');
+    if(payBox && payBox.style.display === 'block'){
+      fields = fields.concat(Array.from(stepEl.querySelectorAll('[data-pay-required]')));
+    }
+
+    let firstInvalid = null;
+    let allValid = true;
+
+    fields.forEach(f=>{
+      const empty = !f.value || !f.value.trim();
+      if(empty){
+        f.classList.add('invalid');
+        allValid = false;
+        if(!firstInvalid) firstInvalid = f;
+      } else {
+        f.classList.remove('invalid');
+      }
+    });
+
+    if(firstInvalid){
+      firstInvalid.scrollIntoView({behavior:'smooth', block:'center'});
+      firstInvalid.focus();
+    }
+    return allValid;
+  }
+
+  // Clear the red highlight as soon as the user fills the field
+  document.querySelectorAll('input, select, textarea').forEach(f=>{
+    f.addEventListener('input', ()=>{
+      if(f.value && f.value.trim()) f.classList.remove('invalid');
+    });
+    f.addEventListener('change', ()=>{
+      if(f.value && f.value.trim()) f.classList.remove('invalid');
+    });
+  });
+
+  function next(s){
+    if(!validateStep(s)) return; // stop here — required fields left empty turn red
+    document.getElementById('s'+s).classList.remove('active');
+    document.getElementById('s'+(s+1)).classList.add('active');
+    updateStepper(s+1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+  function back(s){
+    document.getElementById('s'+s).classList.remove('active');
+    document.getElementById('s'+(s-1)).classList.add('active');
+    updateStepper(s-1);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function selectPT(val){
+    document.getElementById('pt').value = val;
+    document.querySelectorAll('.pt-card').forEach(c=>c.classList.remove('selected'));
+    document.querySelector('.pt-card[data-val="'+val+'"]').classList.add('selected');
+    checkPay(val);
+  }
+  function checkPay(v){
+    document.getElementById('payBox').style.display = (v=='Paid') ? 'block' : 'none';
+  }
+
+  let redirectTimer = null;
+  function goToSite(){
+    if(redirectTimer) clearInterval(redirectTimer);
+    window.location.href = redirectUrl;
+  }
+  function showSuccessModal(){
+    document.getElementById('successOverlay').classList.add('active');
+    let secondsLeft = 10;
+    const countdownEl = document.getElementById('countdownText');
+    redirectTimer = setInterval(()=>{
+      secondsLeft--;
+      countdownEl.textContent = secondsLeft + ' second mein khud kar muntaqili ho rahi hai...';
+      if(secondsLeft <= 0){
+        clearInterval(redirectTimer);
+        window.location.href = redirectUrl;
+      }
+    }, 1000);
+  }
+
+  document.getElementById('mobileForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    if(!validateStep(4)) return; // stop submit — empty required fields turn red
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerText = "Upload ho raha hai...";
+
+    let images = [];
+    for(let i=1; i<=3; i++){
+      let file = document.getElementById('img'+i).files[0];
+      if(file){
+        let fd = new FormData(); fd.append('image', file);
+        let res = await fetch('https://api.imgbb.com/1/upload?key=c81f16d49e6ede8e41a882fe395cda2d', {method:'POST', body:fd});
+        let json = await res.json();
+        images.push(json.data.url);
+      } else { images.push(""); }
+    }
+
+    let formData = new FormData(e.target);
+    formData.append('Image1', images[0]);
+    formData.append('Image2', images[1]);
+    formData.append('Image3', images[2]);
+
+    fetch('https://script.google.com/macros/s/AKfycbxpASOsFTrColdUK-jEPqWCaGLcGxO6wAE0fWe2QRM3pN8cpIcSTWsvdkP-CW-DfeHJ1w/exec', {
+      method: 'POST', body: formData
+    })
+    .then(() => {
+      showSuccessModal();
+    })
+    .catch(() => {
+      btn.disabled = false;
+      btn.innerText = "Ashtihar Jama Karwayein ?";
+      alert('Kuch masla hua, dobara koshish karein.');
+    });
+  });
+</script>
+</body>
+</html>
